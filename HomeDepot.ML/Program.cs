@@ -29,9 +29,9 @@ mlContext.Log += (o, e) =>
 // Load taining data.
 var columns = new[]
 {
-    new TextLoader.Column("search_term", DataKind.String, 3),
-    new TextLoader.Column("relevance", DataKind.Single, 4),
-    new TextLoader.Column("product_description", DataKind.String, 5)
+    new TextLoader.Column(Constants.SearchTermColumnName, DataKind.String, 3),
+    new TextLoader.Column(Constants.RelevanceColumnName, DataKind.Single, 4),
+    new TextLoader.Column(Constants.ProductDescriptionColumnName, DataKind.String, 5)
 };
 var loaderOptions = new TextLoader.Options()
 {
@@ -48,11 +48,11 @@ var dataSplit = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
 
 // Define training pipeline.
 var pipeline = mlContext.Transforms
-    .ReplaceMissingValues("relevance", replacementMode: MissingValueReplacingEstimator.ReplacementMode.Mean)
+    .ReplaceMissingValues(Constants.RelevanceColumnName, replacementMode: MissingValueReplacingEstimator.ReplacementMode.Mean)
     .Append(mlContext.Regression.Trainers.SentenceSimilarity(
-        labelColumnName: "relevance",
-        sentence1ColumnName: "search_term",
-        sentence2ColumnName: "product_description",
+        labelColumnName: Constants.RelevanceColumnName,
+        sentence1ColumnName: Constants.SearchTermColumnName,
+        sentence2ColumnName: Constants.ProductDescriptionColumnName,
         batchSize: 32,
         maxEpochs: 10,
         architecture: Microsoft.ML.TorchSharp.NasBert.BertArchitecture.Roberta,
@@ -65,7 +65,7 @@ var model = pipeline.Fit(dataSplit.TrainSet);
 var predictions = model.Transform(dataSplit.TestSet);
 
 // Evaluate trained model.
-Evaluate(predictions, "relevance", "Score");
+Evaluate(predictions, Constants.RelevanceColumnName, "Score");
 
 // Save model.
 mlContext.Model.Save(model, data.Schema, "model.zip");

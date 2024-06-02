@@ -6,13 +6,6 @@ namespace HomeDepot.ML
 {
     internal class DataPreparer(MLContext mlContext)
     {
-        private const string _idColumnName = "id";
-        private const string _productUidColumnName = "product_uid";
-        private const string _productTitleColumnName = "product_title";
-        private const string _searchTermColumnName = "search_term";
-        private const string _relevanceColumnName = "relevance";
-        private const string _productDescriptionColumnName = "product_description";
-
         private readonly MLContext _mlContext = mlContext;
         private readonly Dictionary<string, string> _productDescriptions = [];
 
@@ -31,7 +24,7 @@ namespace HomeDepot.ML
                 allowQuoting: true);
 
             // Transform data.
-            var pipeline = _mlContext.Transforms.CustomMapping(new ProductDescriptionMappingFactory(_productDescriptions).GetMapping(), contractName: _productDescriptionColumnName);
+            var pipeline = _mlContext.Transforms.CustomMapping(new ProductDescriptionMappingFactory(_productDescriptions).GetMapping(), contractName: Constants.ProductDescriptionColumnName);
             var transformedData = pipeline.Fit(dataView).Transform(dataView);
 
             // Save transformed data to file.
@@ -56,19 +49,19 @@ namespace HomeDepot.ML
                 separatorChar: ',',
                 allowQuoting: true,
                 columns: [
-                    new TextLoader.Column(_productUidColumnName,DataKind.String, 0),
-                    new TextLoader.Column(_productDescriptionColumnName,DataKind.String, 1)
+                    new TextLoader.Column(Constants.ProductUidColumnName,DataKind.String, 0),
+                    new TextLoader.Column(Constants.ProductDescriptionColumnName,DataKind.String, 1)
                 ]);
             foreach (var row in productDescriptionDataView.Preview(Int32.MaxValue).RowView)
             {
                 string? uid = null, description = null;
                 foreach (var column in row.Values)
                 {
-                    if (column.Key == _productUidColumnName)
+                    if (column.Key == Constants.ProductUidColumnName)
                     {
                         uid = column.Value.ToString();
                     }
-                    else if (column.Key == _productDescriptionColumnName)
+                    else if (column.Key == Constants.ProductDescriptionColumnName)
                     {
                         description = column.Value.ToString();
                     }
@@ -76,14 +69,14 @@ namespace HomeDepot.ML
 
                 // Verify values.
                 if (string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(description))
-                    throw new InvalidOperationException($"Invalid product description row ({_productUidColumnName}: {uid}, {_productDescriptionColumnName}: {description?.Take(32)}{(description?.Length > 32 ? "..." : string.Empty)})");
+                    throw new InvalidOperationException($"Invalid product description row ({Constants.ProductUidColumnName}: {uid}, {Constants.ProductDescriptionColumnName}: {description?.Take(32)}{(description?.Length > 32 ? "..." : string.Empty)})");
 
                 _productDescriptions.Add(uid, description);
             }
         }
 
         // https://learn.microsoft.com/en-us/dotnet/api/microsoft.ml.custommappingcatalog.custommapping?view=ml-dotnet
-        [CustomMappingFactoryAttribute(_productDescriptionColumnName)]
+        [CustomMappingFactoryAttribute(Constants.ProductDescriptionColumnName)]
         private class ProductDescriptionMappingFactory(Dictionary<string, string> productDescriptions) : CustomMappingFactory<HomeDepotSample, ComplementaryData>
         {
             private readonly Dictionary<string, string> _productDescriptions = productDescriptions;
@@ -113,23 +106,23 @@ namespace HomeDepot.ML
         private class HomeDepotSample
         {
             [LoadColumn(0)]
-            [ColumnName(_idColumnName)]
+            [ColumnName(Constants.IdColumnName)]
             public int Id { get; set; }
 
             [LoadColumn(1)]
-            [ColumnName(_productUidColumnName)]
+            [ColumnName(Constants.ProductUidColumnName)]
             public string ProductUid { get; set; } = string.Empty;
 
             [LoadColumn(2)]
-            [ColumnName(_productTitleColumnName)]
+            [ColumnName(Constants.ProductTitleColumnName)]
             public string ProductTitle { get; set; } = string.Empty;
 
             [LoadColumn(3)]
-            [ColumnName(_searchTermColumnName)]
+            [ColumnName(Constants.SearchTermColumnName)]
             public string SearchTerm { get; set; } = string.Empty;
 
             [LoadColumn(4)]
-            [ColumnName(_relevanceColumnName)]
+            [ColumnName(Constants.RelevanceColumnName)]
             public string Relevance { get; set; } = string.Empty;
         }
 
@@ -138,7 +131,7 @@ namespace HomeDepot.ML
         /// </summary>
         private class ComplementaryData
         {
-            [ColumnName(_productDescriptionColumnName)]
+            [ColumnName(Constants.ProductDescriptionColumnName)]
             public string ProductDescription { get; set; } = string.Empty;
         }
     }
