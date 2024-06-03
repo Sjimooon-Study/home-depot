@@ -1,6 +1,6 @@
-﻿namespace HomeDepot.ML
+﻿namespace HomeDepot.Lib.ML
 {
-    internal class Constants
+    public class Constants
     {
         public const string IdColumnName = "id";
         public const string ProductUidColumnName = "product_uid";

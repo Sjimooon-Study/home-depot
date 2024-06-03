@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDepot.ML", "HomeDepot.ML\HomeDepot.ML.csproj", "{F60B3EEA-1E71-40D4-923B-ECB2A4C5B8A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDepot.ML", "HomeDepot.ML\HomeDepot.ML.csproj", "{F60B3EEA-1E71-40D4-923B-ECB2A4C5B8A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDepot.Console", "HomeDepot.Console\HomeDepot.Console.csproj", "{629C478E-A807-4681-9DAE-6C2C9FE97402}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDepot.Lib", "HomeDepot.Lib\HomeDepot.Lib.csproj", "{910FE8D7-55FC-41AC-AC02-C321A2893ECC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{F60B3EEA-1E71-40D4-923B-ECB2A4C5B8A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F60B3EEA-1E71-40D4-923B-ECB2A4C5B8A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F60B3EEA-1E71-40D4-923B-ECB2A4C5B8A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{629C478E-A807-4681-9DAE-6C2C9FE97402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{629C478E-A807-4681-9DAE-6C2C9FE97402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{629C478E-A807-4681-9DAE-6C2C9FE97402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{629C478E-A807-4681-9DAE-6C2C9FE97402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{910FE8D7-55FC-41AC-AC02-C321A2893ECC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{910FE8D7-55FC-41AC-AC02-C321A2893ECC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{910FE8D7-55FC-41AC-AC02-C321A2893ECC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{910FE8D7-55FC-41AC-AC02-C321A2893ECC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

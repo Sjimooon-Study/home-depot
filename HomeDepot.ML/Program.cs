@@ -4,16 +4,19 @@ using Microsoft.ML.Data;
 using Microsoft.ML.TorchSharp;
 using Microsoft.ML.Transforms;
 using MathNet.Numerics.Statistics;
+using HomeDepot.Lib.ML;
 
 var mlContext = new MLContext(seed: 1);
 
-var baseDataPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Data", "train.csv"));
+var baseTrianDataPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Data", "train.csv"));
+var baseTestDataPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Data", "test.csv"));
 var productDescriptionsPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Data", "product_descriptions.csv"));
-var dataPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Data", "data.csv"));
+var trainDataPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Data", "train-data.csv"));
+var testDataPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Data", "test-data.csv"));
 
 // Transform data.
 DataPreparer dataPreparer = new(mlContext);
-dataPreparer.Run(baseDataPath, productDescriptionsPath, dataPath);
+dataPreparer.Run(baseTrianDataPath, baseTestDataPath, productDescriptionsPath, trainDataPath, testDataPath);
 
 // Use GPU (Optional).
 mlContext.GpuDeviceId = 0;
@@ -41,7 +44,7 @@ var loaderOptions = new TextLoader.Options()
     MaxRows = 1000
 };
 var textLoader = mlContext.Data.CreateTextLoader(loaderOptions);
-var data = textLoader.Load(dataPath);
+var data = textLoader.Load(trainDataPath);
 
 // Split data (80% training, 20% testing).
 var dataSplit = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);

@@ -1,4 +1,5 @@
-﻿using Microsoft.ML;
+﻿using HomeDepot.Lib.ML;
+using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Transforms;
 
@@ -9,28 +10,39 @@ namespace HomeDepot.ML
         private readonly MLContext _mlContext = mlContext;
         private readonly Dictionary<string, string> _productDescriptions = [];
 
-        public void Run(string dataPath, string productDescriptionsPath, string outputPath)
+        public void Run(string trainDataPath, string testDataPath, string productDescriptionsPath, string trainOutputPath, string testOutputPath)
         {
-            if (!Path.Exists(dataPath))
-                throw new ArgumentException("Unable to locate data.", nameof(dataPath));
+            if (!Path.Exists(trainDataPath))
+                throw new ArgumentException("Unable to locate data.", nameof(trainDataPath));
 
             // Load complementary training data.
             LoadProductDescriptions(productDescriptionsPath);
 
             // Load base training data.
-            IDataView dataView = _mlContext.Data.LoadFromTextFile<HomeDepotSample>(dataPath,
+            IDataView trainDataView = _mlContext.Data.LoadFromTextFile<HomeDepotSample>(trainDataPath,
+                hasHeader: true,
+                separatorChar: ',',
+                allowQuoting: true);
+
+            // Load base test data.
+            IDataView testDataView = _mlContext.Data.LoadFromTextFile<HomeDepotSample>(testDataPath,
                 hasHeader: true,
                 separatorChar: ',',
                 allowQuoting: true);
 
             // Transform data.
             var pipeline = _mlContext.Transforms.CustomMapping(new ProductDescriptionMappingFactory(_productDescriptions).GetMapping(), contractName: Constants.ProductDescriptionColumnName);
-            var transformedData = pipeline.Fit(dataView).Transform(dataView);
+            var transformedTrainData = pipeline.Fit(trainDataView).Transform(trainDataView);
+            var transformedTestData = pipeline.Fit(testDataView).Transform(testDataView);
 
             // Save transformed data to file.
-            using FileStream fileStream = new(outputPath, FileMode.Create);
-            _mlContext.Data.SaveAsText(transformedData, fileStream, schema: false, separatorChar: ',');
-            Console.WriteLine($"Wrote data to: '{outputPath}'");
+            using FileStream fileStream = new(trainOutputPath, FileMode.Create);
+            _mlContext.Data.SaveAsText(transformedTrainData, fileStream, schema: false, separatorChar: ',');
+            Console.WriteLine($"Wrote train data to: '{trainOutputPath}'");
+
+            using FileStream fileStream2 = new(testOutputPath, FileMode.Create);
+            _mlContext.Data.SaveAsText(transformedTestData, fileStream2, schema: false, separatorChar: ',');
+            Console.WriteLine($"Wrote test data to: '{testOutputPath}'");
         }
 
         /// <summary>
@@ -123,7 +135,7 @@ namespace HomeDepot.ML
 
             [LoadColumn(4)]
             [ColumnName(Constants.RelevanceColumnName)]
-            public string Relevance { get; set; } = string.Empty;
+            public float Relevance { get; set; }
         }
 
         /// <summary>
