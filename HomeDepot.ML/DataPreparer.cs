@@ -108,7 +108,11 @@ namespace HomeDepot.ML
                     string.IsNullOrWhiteSpace(productDescription))
                     throw new InvalidOperationException($"Product description for product '{input.ProductUid}' was null or whitespace.");
 
-                output.ProductDescription = productDescription;
+                output.ProductDescription = productDescription.ToLowerInvariant();
+                if (productDescription.Contains(input.ProductTitle, StringComparison.InvariantCultureIgnoreCase))
+                    output.ProductInfoCombined = productDescription.ToLowerInvariant();
+                else
+                    output.ProductInfoCombined = input.ProductTitle.ToLowerInvariant() + " " + productDescription.ToLowerInvariant();
             }
         }
 
@@ -145,6 +149,9 @@ namespace HomeDepot.ML
         {
             [ColumnName(Constants.ProductDescriptionColumnName)]
             public string ProductDescription { get; set; } = string.Empty;
+
+            [ColumnName(Constants.ProductInfoCombinedColumnName)]
+            public string ProductInfoCombined { get; set; } = string.Empty;
         }
     }
 }

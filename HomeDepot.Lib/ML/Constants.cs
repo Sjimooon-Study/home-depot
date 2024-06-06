@@ -8,5 +8,6 @@
         public const string SearchTermColumnName = "search_term";
         public const string RelevanceColumnName = "relevance";
         public const string ProductDescriptionColumnName = "product_description";
+        public const string ProductInfoCombinedColumnName = "product_info_combined";
     }
 }
